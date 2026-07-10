@@ -1,6 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname();
+
+  const getLinkClasses = (path) => {
+    const baseClasses = "font-label-md text-label-md pb-1 transition-all duration-300 ease-out";
+    if (pathname === path) {
+      return `${baseClasses} text-primary border-b-2 border-primary active:scale-[1.01]`;
+    }
+    return `${baseClasses} text-on-surface-variant hover:text-primary`;
+  };
+
   return (
     <header className="bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant sticky top-0 z-50 transition-all duration-300">
       <div className="flex justify-between items-center w-full px-margin-desktop py-unit-md max-w-container-max mx-auto">
@@ -8,16 +21,19 @@ export default function Navbar() {
           <span className="font-display text-headline-md font-extrabold tracking-tight text-on-surface">Nagrik Mitra</span>
         </Link>
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="/" className="text-primary font-label-md text-label-md border-b-2 border-primary pb-1 active:scale-[1.01] transition-all duration-300 ease-out">
+          <Link href="/" className={getLinkClasses("/")}>
             Home
           </Link>
-          <Link href="/dashboard" className="text-on-surface-variant font-label-md text-label-md pb-1 hover:text-primary transition-colors duration-300">
+          <Link href="/dashboard" className={getLinkClasses("/dashboard")}>
             Dashboard
           </Link>
-          <Link href="/features" className="text-on-surface-variant font-label-md text-label-md pb-1 hover:text-primary transition-colors duration-300">
+          <Link href="/features" className={getLinkClasses("/features")}>
             Features
           </Link>
-          <Link href="/assistant" className="text-on-surface-variant font-label-md text-label-md pb-1 hover:text-primary transition-colors duration-300">
+          <Link href="/news" className={getLinkClasses("/news")}>
+            News
+          </Link>
+          <Link href="/assistant" className={getLinkClasses("/assistant")}>
             Assistant
           </Link>
         </nav>
