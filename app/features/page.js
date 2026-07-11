@@ -26,7 +26,8 @@ export default function FeaturesPage() {
       title: "News Feed",
       description: "Real-time, verified government policy announcements, national advisories, local community news, and scheme deadline updates sourced directly from official state feeds.",
       icon: Newspaper,
-      status: "Coming Soon",
+      status: "Complete",
+      href: "/news",
     },
     {
       title: "Forms Search",
