@@ -49,6 +49,8 @@ function LoginContent() {
     const defaultMode = searchParams.get("mode");
     if (defaultMode === "signup") {
       setMode("signup");
+    } else {
+      setMode("signin");
     }
   }, [searchParams]);
 
@@ -104,7 +106,7 @@ function LoginContent() {
         router.refresh();
       });
     } catch (err) {
-      handleAuthError(err, "Invalid email or password.");
+      handleAuthError(err, "Invalid credentials. Please verify your email and password and try again.");
       setLoading(false);
     }
   };
@@ -135,11 +137,11 @@ function LoginContent() {
           router.refresh();
         });
       } else {
-        setSuccessMessage("Registration successful! Please check your email to verify your account.");
+        setSuccessMessage("Citizen account initiated! We have sent a secure verification link to your email to verify your identity. Please check your inbox.");
         setLoading(false);
       }
     } catch (err) {
-      handleAuthError(err, "An error occurred during registration.");
+      handleAuthError(err, "Could not complete registration. Please ensure your email is correct and try again.");
       setLoading(false);
     }
   };
@@ -157,10 +159,10 @@ function LoginContent() {
       });
       if (err) throw err;
 
-      setSuccessMessage("Password reset email sent! Please check your inbox for the link.");
+      setSuccessMessage("Password recovery link generated! Please check your inbox for secure instructions to reset your password.");
       setLoading(false);
     } catch (err) {
-      handleAuthError(err, "Could not send password reset email.");
+      handleAuthError(err, "Failed to send recovery email. Please verify if the email address is registered.");
       setLoading(false);
     }
   };
