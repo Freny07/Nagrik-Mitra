@@ -8,7 +8,12 @@ create table if not exists public.profiles (
   full_name text,
   avatar_url text,
   language_preference text default 'en',
-  role text default 'citizen'
+  role text default 'General Citizen',
+  dob date,
+  gender text default 'Male',
+  income integer,
+  location text,
+  verified_documents text[] default '{}'
 );
 
 -- 2. Enable Row Level Security (RLS)

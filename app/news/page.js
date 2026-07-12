@@ -2,60 +2,76 @@
 
 import { useEffect, useState } from 'react';
 import { Newspaper, Loader2, UserCircle, MapPin, AlertCircle, X } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
 
 export default function NewsDashboard() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeArticle, setActiveArticle] = useState(null);
   const [userData, setUserData] = useState({
-    role: 'citizen',
-    location: 'local',
-    grievanceContext: 'general'
+    displayName: 'Guest',
+    userLocation: 'India',
+    userRole: 'General Bulletins',
+    isGuest: true
   });
 
   useEffect(() => {
-    // Inject local-storage active user properties dynamically
-    try {
-      const storedRole = localStorage.getItem('user_role');
-      const storedLocation = localStorage.getItem('user_location');
-      const storedContext = localStorage.getItem('user_context');
-      
-      // Explicit validation guard checks for guest users
-      const isGuest = !storedRole && !storedLocation;
-      
-      const newUserData = {
-        role: storedRole || (isGuest ? '' : 'citizen'),
-        location: storedLocation || (isGuest ? '' : 'local'),
-        grievanceContext: storedContext || (isGuest ? 'General Bulletins' : 'general'),
-        isGuest
-      };
+    const fetchAuthAndNews = async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-      const fetchNews = async () => {
-        try {
-          const params = new URLSearchParams({
-            role: newUserData.role,
-            location: newUserData.location,
-            grievanceContext: newUserData.grievanceContext
-          });
-          
-          const response = await fetch(`/api/news?${params.toString()}`);
-          if (!response.ok) throw new Error('Failed to fetch news');
-          const data = await response.json();
-          setArticles(data.articles || []);
-          setUserData(newUserData);
-        } catch (error) {
-          console.error("Error loading news:", error);
-          setUserData(newUserData);
-        } finally {
-          setLoading(false);
+        let newUserData = {
+          displayName: 'Guest',
+          userLocation: 'India',
+          userRole: 'General Bulletins',
+          isGuest: true
+        };
+
+        if (user && !authError) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+          const fallbackName = user.user_metadata?.full_name?.split(' ')[0] || user.user_metadata?.name?.split(' ')[0] || 'Citizen';
+
+          if (profile) {
+            newUserData = {
+              displayName: profile.full_name?.split(' ')[0] || fallbackName,
+              userLocation: profile.location || 'India',
+              userRole: profile.role || 'citizen',
+              isGuest: false
+            };
+          } else {
+            newUserData = {
+              displayName: fallbackName,
+              userLocation: 'India',
+              userRole: 'citizen',
+              isGuest: false
+            };
+          }
         }
-      };
 
-      fetchNews();
-    } catch (e) {
-      console.error("Local storage error:", e);
-      setLoading(false);
-    }
+        const params = new URLSearchParams({
+          role: newUserData.userRole,
+          location: newUserData.userLocation
+        });
+        
+        const response = await fetch(`/api/news?${params.toString()}`);
+        if (!response.ok) throw new Error('Failed to fetch news');
+        const data = await response.json();
+        setArticles(data.articles || []);
+        setUserData(newUserData);
+      } catch (error) {
+        console.error("Error loading news:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAuthAndNews();
   }, []);
 
   return (
@@ -73,15 +89,15 @@ export default function NewsDashboard() {
           <div className="mt-6 flex flex-wrap gap-4">
              <div className="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant text-label-md text-on-surface">
                 <UserCircle className="w-4 h-4 text-primary" />
-                <span className="capitalize">{userData.role || 'Guest'}</span>
+                <span className="capitalize">{userData.displayName}</span>
              </div>
              <div className="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant text-label-md text-on-surface">
                 <MapPin className="w-4 h-4 text-primary" />
-                <span className="capitalize">{userData.location || 'India'}</span>
+                <span className="capitalize">{userData.userLocation}</span>
              </div>
              <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-label-md transition-colors ${userData.isGuest ? 'bg-primary text-on-primary border-primary' : 'bg-surface-container-low border-outline-variant text-on-surface'}`}>
                 <AlertCircle className={`w-4 h-4 ${userData.isGuest ? 'text-on-primary' : 'text-primary'}`} />
-                <span className="capitalize">{userData.grievanceContext}</span>
+                <span className="capitalize">{userData.userRole}</span>
              </div>
           </div>
         </header>

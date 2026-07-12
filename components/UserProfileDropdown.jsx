@@ -20,6 +20,23 @@ export default function UserProfileDropdown({ user, supabase }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const [isProfileIncomplete, setIsProfileIncomplete] = useState(false);
+
+  useEffect(() => {
+    async function checkProfile() {
+      if (user) {
+        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+        if (data) {
+          const incomplete = !data.location || data.location === 'India' || !data.income || data.income === 0 || data.role === 'citizen' || data.role === 'General Citizen';
+          setIsProfileIncomplete(incomplete);
+        } else {
+          setIsProfileIncomplete(true);
+        }
+      }
+    }
+    checkProfile();
+  }, [user, supabase]);
+
   const handleSignOut = async () => {
     setIsOpen(false);
     await supabase.auth.signOut();
@@ -43,15 +60,21 @@ export default function UserProfileDropdown({ user, supabase }) {
         className="flex items-center gap-2 p-1.5 rounded-full hover:bg-surface-container-low transition-colors duration-200 focus:outline-none"
       >
         {avatarUrl ? (
-          <img
-            src={avatarUrl}
-            alt={fullName}
-            referrerPolicy="no-referrer"
-            className="w-9 h-9 rounded-full object-cover border border-outline-variant shadow-sm"
-          />
+          <div className="relative">
+            <img
+              src={avatarUrl}
+              alt={fullName}
+              referrerPolicy="no-referrer"
+              className="w-9 h-9 rounded-full object-cover border border-outline-variant shadow-sm"
+            />
+            {isProfileIncomplete && <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-orange-500 border-2 border-white rounded-full animate-pulse"></span>}
+          </div>
         ) : (
-          <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-label-md border border-primary/20">
-            {initial}
+          <div className="relative">
+            <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-label-md border border-primary/20">
+              {initial}
+            </div>
+            {isProfileIncomplete && <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-orange-500 border-2 border-white rounded-full animate-pulse"></span>}
           </div>
         )}
         <span className="hidden lg:block text-label-md font-semibold text-on-surface select-none">
@@ -91,6 +114,22 @@ export default function UserProfileDropdown({ user, supabase }) {
 
           {/* Links */}
           <div className="p-1.5 space-y-0.5">
+            <Link
+              href="/profile"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-between px-3 py-2 rounded-xl text-label-md text-on-surface hover:bg-surface-container-low transition-colors duration-150"
+            >
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-[20px] text-on-surface-variant">
+                  person
+                </span>
+                <span>Manage Civic Profile</span>
+              </div>
+              {isProfileIncomplete && (
+                 <span className="w-2.5 h-2.5 bg-orange-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.6)] ml-2"></span>
+              )}
+            </Link>
+
             <Link
               href="/dashboard"
               onClick={() => setIsOpen(false)}
