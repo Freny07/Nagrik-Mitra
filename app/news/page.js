@@ -1,60 +1,77 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Newspaper, Loader2, UserCircle, MapPin, AlertCircle } from 'lucide-react';
+import { Newspaper, Loader2, UserCircle, MapPin, AlertCircle, X } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
 
 export default function NewsDashboard() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeArticle, setActiveArticle] = useState(null);
   const [userData, setUserData] = useState({
-    role: 'citizen',
-    location: 'local',
-    grievanceContext: 'general'
+    displayName: 'Guest',
+    userLocation: 'India',
+    userRole: 'General Bulletins',
+    isGuest: true
   });
 
   useEffect(() => {
-    // Inject local-storage active user properties dynamically
-    try {
-      const storedRole = localStorage.getItem('user_role');
-      const storedLocation = localStorage.getItem('user_location');
-      const storedContext = localStorage.getItem('user_context');
-      
-      // Explicit validation guard checks for guest users
-      const isGuest = !storedRole && !storedLocation;
-      
-      const newUserData = {
-        role: storedRole || (isGuest ? '' : 'citizen'),
-        location: storedLocation || (isGuest ? '' : 'local'),
-        grievanceContext: storedContext || (isGuest ? 'General Bulletins' : 'general'),
-        isGuest
-      };
+    const fetchAuthAndNews = async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-      const fetchNews = async () => {
-        try {
-          const params = new URLSearchParams({
-            role: newUserData.role,
-            location: newUserData.location,
-            grievanceContext: newUserData.grievanceContext
-          });
-          
-          const response = await fetch(`/api/news?${params.toString()}`);
-          if (!response.ok) throw new Error('Failed to fetch news');
-          const data = await response.json();
-          setArticles(data.articles || []);
-          setUserData(newUserData);
-        } catch (error) {
-          console.error("Error loading news:", error);
-          setUserData(newUserData);
-        } finally {
-          setLoading(false);
+        let newUserData = {
+          displayName: 'Guest',
+          userLocation: 'India',
+          userRole: 'General Bulletins',
+          isGuest: true
+        };
+
+        if (user && !authError) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+          const fallbackName = user.user_metadata?.full_name?.split(' ')[0] || user.user_metadata?.name?.split(' ')[0] || 'Citizen';
+
+          if (profile) {
+            newUserData = {
+              displayName: profile.full_name?.split(' ')[0] || fallbackName,
+              userLocation: profile.location || 'India',
+              userRole: profile.role || 'citizen',
+              isGuest: false
+            };
+          } else {
+            newUserData = {
+              displayName: fallbackName,
+              userLocation: 'India',
+              userRole: 'citizen',
+              isGuest: false
+            };
+          }
         }
-      };
 
-      fetchNews();
-    } catch (e) {
-      console.error("Local storage error:", e);
-      setLoading(false);
-    }
+        const params = new URLSearchParams({
+          role: newUserData.userRole,
+          location: newUserData.userLocation
+        });
+        
+        const response = await fetch(`/api/news?${params.toString()}`);
+        if (!response.ok) throw new Error('Failed to fetch news');
+        const data = await response.json();
+        setArticles(data.articles || []);
+        setUserData(newUserData);
+      } catch (error) {
+        console.error("Error loading news:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAuthAndNews();
   }, []);
 
   return (
@@ -72,15 +89,15 @@ export default function NewsDashboard() {
           <div className="mt-6 flex flex-wrap gap-4">
              <div className="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant text-label-md text-on-surface">
                 <UserCircle className="w-4 h-4 text-primary" />
-                <span className="capitalize">{userData.role || 'Guest'}</span>
+                <span className="capitalize">{userData.displayName}</span>
              </div>
              <div className="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant text-label-md text-on-surface">
                 <MapPin className="w-4 h-4 text-primary" />
-                <span className="capitalize">{userData.location || 'India'}</span>
+                <span className="capitalize">{userData.userLocation}</span>
              </div>
              <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-label-md transition-colors ${userData.isGuest ? 'bg-primary text-on-primary border-primary' : 'bg-surface-container-low border-outline-variant text-on-surface'}`}>
                 <AlertCircle className={`w-4 h-4 ${userData.isGuest ? 'text-on-primary' : 'text-primary'}`} />
-                <span className="capitalize">{userData.grievanceContext}</span>
+                <span className="capitalize">{userData.userRole}</span>
              </div>
           </div>
         </header>
@@ -94,10 +111,10 @@ export default function NewsDashboard() {
             {articles.map((article, index) => (
               <article 
                 key={index} 
-                className="bg-surface-container-lowest rounded-2xl p-6 shadow-[0px_8px_30px_rgba(15,23,42,0.03)] border border-surface-container transition-transform hover:-translate-y-1 duration-300 flex flex-col h-full"
+                className={`bg-surface-container-lowest rounded-2xl p-6 shadow-[0px_8px_30px_rgba(15,23,42,0.03)] border border-surface-container transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-[0px_20px_40px_rgba(53,37,205,0.05)] hover:border-primary/20 flex flex-col h-full ${index === 0 ? 'lg:col-span-2 md:col-span-2' : ''}`}
               >
                 <div className="flex-1">
-                  <div className="text-label-sm text-primary font-bold tracking-wider uppercase mb-3">
+                  <div className="bg-primary/5 text-primary px-3 py-1 rounded-full text-label-sm font-semibold tracking-normal normal-case inline-block mb-3">
                     {article.source?.name || 'Civic Update'}
                   </div>
                   <h2 className="text-body-lg font-bold text-on-surface mb-3 line-clamp-2 leading-tight">
@@ -114,14 +131,15 @@ export default function NewsDashboard() {
                       year: 'numeric', month: 'short', day: 'numeric'
                     })}
                   </span>
-                  <a 
-                    href={article.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveArticle(article);
+                    }}
                     className="text-label-md text-primary hover:text-primary-container font-semibold transition-colors"
                   >
                     Read more
-                  </a>
+                  </button>
                 </div>
               </article>
             ))}
@@ -131,6 +149,50 @@ export default function NewsDashboard() {
                 <p className="text-body-lg text-on-surface-variant">No relevant civic updates found for your current profile.</p>
               </div>
             )}
+          </div>
+        )}
+        {activeArticle && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
+            <div className="bg-surface-container-lowest w-full max-w-2xl rounded-2xl p-8 shadow-2xl scale-in-animation relative max-h-[90vh] flex flex-col">
+              <button 
+                onClick={() => setActiveArticle(null)}
+                className="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="overflow-y-auto pr-2">
+                <div className="bg-primary/5 text-primary px-3 py-1 rounded-full text-label-sm font-semibold tracking-normal normal-case inline-block mb-4">
+                  {activeArticle.source?.name || 'Civic Update'}
+                </div>
+                
+                <h2 className="text-headline-sm font-bold text-on-surface mb-4">
+                  {activeArticle.title}
+                </h2>
+                
+                <div className="text-label-sm text-outline mb-6">
+                  {new Date(activeArticle.publishedAt).toLocaleDateString('en-IN', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                  })}
+                </div>
+                
+                <p className="text-body-lg text-on-surface-variant leading-relaxed mb-8">
+                  {activeArticle.description}
+                </p>
+              </div>
+              
+              <div className="mt-auto pt-6 border-t border-surface-container">
+                <a 
+                  href={activeArticle.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full py-3 px-6 bg-[#3525CD] hover:bg-[#2d1fae] text-white text-center rounded-xl font-semibold transition-colors shadow-lg shadow-primary/20"
+                >
+                  For full details, visit original source ↗
+                </a>
+              </div>
+            </div>
           </div>
         )}
       </div>
