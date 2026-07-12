@@ -9,6 +9,7 @@ export async function GET(request) {
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+    
     if (!error) {
       const forwardedHost = request.headers.get("x-forwarded-host"); // Original origin before proxy
       const isLocalEnv = process.env.NODE_ENV === "development";
@@ -23,6 +24,6 @@ export async function GET(request) {
     }
   }
 
-  // If there's an error, redirect to login page with message
+  // If there's an error or missing code, redirect to login page with message
   return NextResponse.redirect(`${origin}/login?error=Could not authenticate user`);
 }
