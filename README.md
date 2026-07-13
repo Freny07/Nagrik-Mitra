@@ -35,9 +35,9 @@ The portal is organized into standard, intuitive pages designed to make complex 
 
 ---
 
-## 🚀 Feature Analysis: Implemented vs. Future Roadmap
+## 🚀 Feature Analysis
 
-### 1. Features Currently Implemented
+### Features Currently Implemented
 The platform has a fully functional, production-ready set of core features targeting language and accessibility barriers:
 
 *   **🗣️ Voice-to-Text (STT) Dictation**: Allows users to tap a microphone and describe their problems in their native dialect instead of typing (powered by Sarvam AI API `saaras:v3` transcribing local language audio, with script-level language detection fallback).
@@ -48,14 +48,6 @@ The platform has a fully functional, production-ready set of core features targe
 *   **🔍 Smart Scheme Eligibility Engine**: Compares the user's profile data (role, income, location, verified documents) against central and state government schemes (e.g., *UP Post-Matric Scholarship*, *PM-Kisan Samman Nidhi*, *Kanya Sumangala Yojana*) and provides eligibility feedback with exact reasons.
 *   **📰 Geolocation & Role-Targeted News Feed**: Sourced from the GNews API, it automatically appends the user's role (e.g., student, farmer) and state location to fetch targeted welfare news.
 *   **🔒 Secure Profile & Document Vault**: Supabase auth & RLS integration to store citizen demographic parameters (income, role, location, language preference, DOB).
-
-### 2. Future Roadmap
-The following features are planned for subsequent iterations to extend the platform's utility:
-
-*   **🔗 Aadhaar-linked Verifiable Credentials**: Direct synchronization of documents (caste certificate, income certificate, land records) from DigiLocker using anonymous cryptographic verification to protect user privacy and auto-verify profiles.
-*   **📞 Offline Mode (Voice IVR & SMS)**: Allowing citizens without smartphones or internet access to dial a toll-free number where the AI engine will process the complaint over a telephone call, translate it, and file it on the dashboard.
-*   **📥 API Integration with State Portals (CPGRAMS / CPGRAMS APIs)**: Automatically transmit the generated formal grievance into the relevant department's official complaints database without requiring citizens to copy-paste manually.
-*   **📄 Universal Form Filler (Forms Search)**: Indexing and pre-populating fields of PDFs and online government applications automatically using the user's encrypted Document Vault data.
 
 ---
 
