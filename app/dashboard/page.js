@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { Copy, Check, ChevronDown, ChevronUp, FileText, Calendar, Clock, Lock, Mic, AlertTriangle, Sparkles, ShieldCheck, X } from "lucide-react";
+import { Copy, Check, ChevronDown, ChevronUp, FileText, Calendar, Clock, Lock, Mic, AlertTriangle, Sparkles, ShieldCheck, X, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
@@ -107,6 +107,74 @@ export default function Dashboard() {
   
   const [animatedScore, setAnimatedScore] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const [insight, setInsight] = useState(null);
+
+  const getDynamicInsight = (profile) => {
+    if (!profile) return { 
+      text: "Keep your profile updated with your latest income and occupational details to receive personalized, highly-accurate civic welfare recommendations.", 
+      linkText: "Update Profile", 
+      href: "/profile" 
+    };
+
+    const insights = [];
+    const docs = profile.verified_documents || [];
+
+    // Scheme Insight based on Income/Role
+    if (profile.role?.toLowerCase() === 'student' && Number(profile.income) < 300000) {
+      insights.push({
+        text: `🎯 Based on your verified student status in ${profile.location || "your area"}, you have active academic welfare programs awaiting document attachment.`,
+        linkText: "Map your credentials",
+        href: "/schemes"
+      });
+    } else if (Number(profile.income) <= 250000) {
+      insights.push({
+        text: `💡 Your declared income qualifies you for EWS (Economically Weaker Section) civic benefits across state and central schemes.`,
+        linkText: "Check eligible schemes",
+        href: "/schemes"
+      });
+    }
+
+    // Vault/Document tip
+    if (!docs.includes("Income Certificate") || !docs.includes("Domicile Certificate")) {
+      insights.push({
+        text: `⚠️ Your micro-document vault is missing core certificates. Attach them to automatically unlock verified civic services.`,
+        linkText: "Upload documents",
+        href: "/profile"
+      });
+    }
+
+    // Grievance Tip
+    insights.push({
+      text: `🗣️ Did you know? You can draft official government complaints using just your voice in your native dialect. The Sarvam AI engine will translate and format it perfectly.`,
+      linkText: "File a grievance",
+      href: "/grievance"
+    });
+
+    // General News
+    insights.push({
+      text: `📰 Stay informed: New digital verification workflows have been deployed for ${profile.location || "your local"} district. Read the latest civic updates.`,
+      linkText: "Read News",
+      href: "/news"
+    });
+
+    return insights[Math.floor(Math.random() * insights.length)];
+  };
+
+  useEffect(() => {
+    if (profileData) {
+      setInsight(getDynamicInsight(profileData));
+    } else {
+      setInsight(getDynamicInsight(null));
+    }
+  }, [profileData]);
+
+  const handleRefreshInsight = () => {
+    let nextInsight = getDynamicInsight(profileData);
+    if (insight && nextInsight.text === insight.text && profileData) {
+      nextInsight = getDynamicInsight(profileData);
+    }
+    setInsight(nextInsight);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -238,22 +306,25 @@ export default function Dashboard() {
             {/* Staggered Thought Cloud Integration (Right Block) */}
             <div className={`flex-1 transition-all duration-[1000ms] delay-[400ms] ease-out transform ${isMounted ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-8 opacity-0 scale-95'} relative`}>
               <div className="bg-white/70 backdrop-blur-sm border border-indigo-200 p-5 sm:p-6 rounded-3xl rounded-tl-none relative shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:shadow-[0_0_25px_rgba(79,70,229,0.5)] transition-all duration-500">
-                 {profileData?.role?.toLowerCase() === 'student' && profileData?.income && Number(profileData.income) < 300000 ? (
-                   <div className="relative z-10 space-y-2">
-                     <h2 className="font-headline-md text-indigo-900 flex items-center gap-2"><Sparkles className="w-4 h-4 text-indigo-500"/> Sarvam AI Guide</h2>
-                     <p className="font-body-md text-slate-700 leading-relaxed text-sm">
-                       🎯 Based on your verified student status in <strong className="text-indigo-900">{profileData.location || "Lucknow, UP"}</strong>, you have 2 active academic welfare programs awaiting document attachment. 
-                       <Link href="/schemes" className="text-indigo-600 font-bold ml-1 hover:underline">Click here to immediately map your credentials.</Link>
-                     </p>
+                 <div className="relative z-10 space-y-2">
+                   <div className="flex justify-between items-center mb-1">
+                     <h2 className="font-headline-md text-indigo-900 flex items-center gap-2">
+                       <Sparkles className="w-4 h-4 text-indigo-500"/> Sarvam AI Guide
+                     </h2>
+                     <button onClick={handleRefreshInsight} className="text-indigo-400 hover:text-indigo-700 transition-colors bg-white/50 hover:bg-white rounded-full p-1.5 shadow-sm border border-indigo-100" title="Get new insight">
+                       <RefreshCw className="w-4 h-4" />
+                     </button>
                    </div>
-                 ) : (
-                   <div className="relative z-10 space-y-2">
-                     <h2 className="font-headline-md text-slate-800 flex items-center gap-2"><Sparkles className="w-4 h-4 text-indigo-400"/> Sarvam AI Guide</h2>
-                     <p className="font-body-md text-slate-600 leading-relaxed text-sm">
-                       Keep your profile updated with your latest income and occupational details to receive personalized, highly-accurate civic welfare recommendations.
-                     </p>
-                   </div>
-                 )}
+                   
+                   <p className="font-body-md text-slate-700 leading-relaxed text-sm transition-opacity duration-300">
+                     {insight?.text || "Keep your profile updated with your latest income and occupational details to receive personalized, highly-accurate civic welfare recommendations."}
+                     {insight?.href && (
+                       <Link href={insight.href} className="text-indigo-600 font-bold ml-2 hover:underline inline-flex items-center">
+                         {insight.linkText} <span className="material-symbols-outlined text-[14px] ml-0.5">arrow_forward</span>
+                       </Link>
+                     )}
+                   </p>
+                 </div>
               </div>
             </div>
 
