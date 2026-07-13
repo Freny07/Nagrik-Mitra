@@ -148,4 +148,7 @@ npm install
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+### LINKS:
+
+* LIVE DEMO : https://nagrik-mitra-gamma.vercel.app
+* YOUTUBE : https://youtu.be/9rcHKGjy9OQ
