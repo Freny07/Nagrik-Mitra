@@ -57,7 +57,8 @@ export const schemesData = [
     "criteria": {
       "role": "student",
       "location": "Lucknow",
-      "incomeMax": 300000
+      "incomeMax": 300000,
+      "gender": "female"
     },
     "requiredDocs": [
       "Basic Profile",
