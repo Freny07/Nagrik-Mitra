@@ -148,7 +148,7 @@ npm install
 ```bash
 npm run dev
 ```
-### LINKS:
+## 🔗 LINKS:
 
 * LIVE DEMO : https://nagrik-mitra-gamma.vercel.app
 * YOUTUBE : https://youtu.be/9rcHKGjy9OQ
