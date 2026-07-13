@@ -14,7 +14,18 @@ const languageNames = {
   "ml-IN": "Malayalam",
   "pa-IN": "Punjabi",
   "or-IN": "Odia",
-  "ur-IN": "Urdu"
+  "ur-IN": "Urdu",
+  "as-IN": "Assamese",
+  "brx-IN": "Bodo",
+  "doi-IN": "Dogri",
+  "ks-IN": "Kashmiri",
+  "kok-IN": "Konkani",
+  "mai-IN": "Maithili",
+  "mni-IN": "Manipuri",
+  "ne-IN": "Nepali",
+  "sa-IN": "Sanskrit",
+  "sat-IN": "Santali",
+  "sd-IN": "Sindhi"
 };
 
 // Helper function to call the dedicated Sarvam AI Translate API

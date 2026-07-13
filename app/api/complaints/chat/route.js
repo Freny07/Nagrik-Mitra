@@ -13,7 +13,18 @@ const languageNames = {
   "ml-IN": { name: "Malayalam", script: "Malayalam script" },
   "pa-IN": { name: "Punjabi", script: "Gurmukhi script" },
   "or-IN": { name: "Odia", script: "Odia script" },
-  "ur-IN": { name: "Urdu", script: "Urdu Arabic script" }
+  "ur-IN": { name: "Urdu", script: "Urdu Arabic script" },
+  "as-IN": { name: "Assamese", script: "Assamese script" },
+  "brx-IN": { name: "Bodo", script: "Bodo Devanagari script" },
+  "doi-IN": { name: "Dogri", script: "Dogri Devanagari script" },
+  "ks-IN": { name: "Kashmiri", script: "Kashmiri Arabic/Devanagari script" },
+  "kok-IN": { name: "Konkani", script: "Konkani Devanagari/Roman script" },
+  "mai-IN": { name: "Maithili", script: "Maithili Devanagari script" },
+  "mni-IN": { name: "Manipuri", script: "Manipuri Bengali script" },
+  "ne-IN": { name: "Nepali", script: "Nepali Devanagari script" },
+  "sa-IN": { name: "Sanskrit", script: "Sanskrit Devanagari script" },
+  "sat-IN": { name: "Santali", script: "Santali Ol Chiki script" },
+  "sd-IN": { name: "Sindhi", script: "Sindhi Arabic/Devanagari script" }
 };
 
 export async function POST(request) {

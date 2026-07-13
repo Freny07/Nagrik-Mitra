@@ -104,7 +104,7 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-gutter">
             {/* Action Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-              <Link href="/features" className="group bg-surface-container-lowest p-6 rounded-xl signature-shadow border border-outline-variant hover:border-primary transition-all duration-300 flex flex-col items-center justify-center text-center">
+              <Link href="/schemes" className="group bg-surface-container-lowest p-6 rounded-xl signature-shadow border border-outline-variant hover:border-primary transition-all duration-300 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-[24px]">account_balance</span>
                 </div>

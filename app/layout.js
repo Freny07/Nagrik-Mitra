@@ -2,6 +2,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FloatingAssistant from "@/components/FloatingAssistant";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         <main className="flex-grow flex flex-col">{children}</main>
         <Footer />
+        <FloatingAssistant />
       </body>
     </html>
   );

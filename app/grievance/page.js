@@ -151,6 +151,17 @@ export default function GrievancePage() {
     { code: "pa-IN", name: "Punjabi (ਪੰਜਾਬੀ)" },
     { code: "or-IN", name: "Odia (ଓଡ଼ିଆ)" },
     { code: "ur-IN", name: "Urdu (اردو)" },
+    { code: "as-IN", name: "Assamese (অસમীয়া)" },
+    { code: "brx-IN", name: "Bodo (बड़ो)" },
+    { code: "doi-IN", name: "Dogri (डोगरी)" },
+    { code: "ks-IN", name: "Kashmiri (कश्मीरी)" },
+    { code: "kok-IN", name: "Konkani (कोंकणी)" },
+    { code: "mai-IN", name: "Maithili (मैथिली)" },
+    { code: "mni-IN", name: "Manipuri (मৈতৈলোন)" },
+    { code: "ne-IN", name: "Nepali (नेपाली)" },
+    { code: "sa-IN", name: "Sanskrit (संस्कृत)" },
+    { code: "sat-IN", name: "Santali (संताली)" },
+    { code: "sd-IN", name: "Sindhi (सिंधी)" }
   ];
 
   const scrollToBottom = () => {

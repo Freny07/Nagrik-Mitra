@@ -52,8 +52,8 @@ export default function Navbar() {
           <Link href="/dashboard" className={getLinkClasses("/dashboard")}>
             Dashboard
           </Link>
-          <Link href="/features" className={getLinkClasses("/features")}>
-            Features
+          <Link href="/grievance" className={getLinkClasses("/grievance")}>
+            Grievances
           </Link>
           <Link href="/schemes" className={getLinkClasses("/schemes")}>
             Schemes
@@ -63,9 +63,6 @@ export default function Navbar() {
           </Link>
           <Link href="/news" className={getLinkClasses("/news")}>
             News
-          </Link>
-          <Link href="/assistant" className={getLinkClasses("/assistant")}>
-            Assistant
           </Link>
         </nav>
         
