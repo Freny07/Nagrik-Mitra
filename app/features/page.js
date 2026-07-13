@@ -34,7 +34,8 @@ export default function FeaturesPage() {
       title: "Forms Search",
       description: "A comprehensive central index of state and national government applications. Find forms easily, and use your Citizen Profile data to pre-populate form fields in seconds.",
       icon: FileText,
-      status: "Coming Soon",
+      status: "Core",
+      href: "/forms",
     },
     {
       title: "Voice Support",
