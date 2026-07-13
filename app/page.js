@@ -50,10 +50,10 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="w-full bg-[#FAFBFD] text-slate-800 relative overflow-hidden font-sans">
+    <div suppressHydrationWarning className="w-full bg-[#FAFBFD] text-slate-800 relative overflow-hidden font-sans">
       
       {/* Inject custom drifting, floating, and geometric keyframe animations */}
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes drift-one {
           0%, 100% { transform: translate(0px, 0px) scale(1); }
           33% { transform: translate(40px, -60px) scale(1.1); }
@@ -104,7 +104,7 @@ export default function Home() {
         .animate-geom-three {
           animation: geom-float-three 14s infinite ease-in-out;
         }
-      `}</style>
+      `}} />
 
       {/* Hero Section */}
       <section className="relative pt-28 pb-40 overflow-visible bg-gradient-to-b from-indigo-50/60 via-indigo-50/10 to-transparent">
